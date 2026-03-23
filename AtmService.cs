@@ -47,8 +47,18 @@ public class AtmService
     public bool Withdraw(int amount)
     {
         EnsureAuthenticated();
-        AtmBalance -= amount;
-        return _currentCard!.Account.Withdraw(amount);
+        if (amount > AtmBalance)
+        {
+            return false;
+        }
+        bool success = _currentCard!.Account.Withdraw(amount);
+        if (success)
+        {
+            AtmBalance -= amount;
+        }
+
+        return success;
+
     }
     
     public bool Deposit(int amount)
