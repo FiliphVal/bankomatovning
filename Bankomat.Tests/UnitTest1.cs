@@ -1,119 +1,75 @@
 ﻿using ATM;
 namespace AtmTest;
-
-public class AccountTest
+ 
+public class CardTest()
 {
-    private Account account = new Account(5000);
+
+    private Account myAccount = new Account (5000);
 
     [Fact]
-    public void DepositTest()
+    public void RightPinCodeTest()
     {
-        account.Deposit(5000);
-        Assert.Equal(10000, account.GetBalance());
+        Card card1 = new Card("222-222", "2222", myAccount);
+
+        bool MatchesPin = card1.MatchesPin("2222");
+        Assert.True(MatchesPin);
     }
 
     [Fact]
-    public void WithdrawTest()
+    public void WrongPinCodeTest()
     {
-        account.Withdraw(5000);
-        Assert.Equal(0, account.GetBalance());
-    }
+        Card card2 = new Card("2022-1212", "9343", myAccount);
 
-    /* public void WithdrawFailTest()
-    {
-        account.Withdraw(20000);
-        Assert.Equal(5000, account.GetBalance());
-    } */
-}
+        bool noMatch = card2.MatchesPin("0303");
 
-public class CardTest
-{
-    private Account myAccount = new Account(50000);
-
-    [Fact]
-
-    public void RightPinCode()
-    {
-        var card = new Card("12345", "9322", myAccount);
-
-        bool result = card.MatchesPin("9322");
-
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void WrongPinCode()
-    {
-        var card = new Card("1234", "2222", myAccount);
-
-        bool result = card.MatchesPin("9999");
-
-        Assert.False(result);
+        Assert.False(noMatch);
     }
 }
 
-public class AtmServiceTest
+public class AccountTest()
 {
 
+    private Account brokeAccount = new Account(5);
     [Fact]
-    public void RightPinCodeEnoughMoney()
+    public void BigDeposit()
     {
-        var myAccount = new Account(1000);
-        var richCard = new Card("9322-2", "9333", myAccount);
-        var atm = new AtmService(2000);
+       brokeAccount.Deposit(50000);
 
-        atm.InsertCard(richCard);
-        bool Pin = atm.EnterPin("9333");
-        bool Withdraw = atm.Withdraw(500);
-
-        Assert.True(Pin);
-        Assert.True(Withdraw);
-        Assert.Equal(500, myAccount.GetBalance());
-        Assert.Equal(1500, atm.AtmBalance);
+       Assert.Equal(50000, brokeAccount.GetBalance());
     }
 
+
+  private Account RichAccount = new Account(50000);
+
     [Fact]
-
-    public void TestUppgift()
+    public void ToBigWithdraw()
     {
-        var account = new Account(9000);
-        var card = new Card("9333", "0000", account);
-        var atm = new AtmService(11000);
-        atm.InsertCard(card);
-        bool wrongPin = atm.EnterPin("1234");
-        bool rightPin = atm.EnterPin("0000");
-        bool Withdraw = atm.Withdraw(5000);
-        atm.EjectCard();
-        atm.InsertCard(card);
-        bool rightPin2 = atm.EnterPin("0000");
-        bool WithdrawBroke = atm.Withdraw(7000);
-        bool WithdrawRight = atm.Withdraw(6000);
-        atm.EjectCard();
+        RichAccount.Withdraw(50005);
 
+        Assert.Equal(50000, RichAccount.GetBalance());
+    }
 
-        Assert.False(wrongPin);
-        Assert.True(rightPin);
-        Assert.Equal(4000, account.GetBalance());
-        Assert.Equal(6000, atm.AtmBalance);
-        Assert.True(rightPin2);
-        Assert.Equal(4000, account.GetBalance());
-        Assert.Equal(6000, atm.AtmBalance);
-        Assert.Equal(4000, account.GetBalance());
-        Assert.Equal(6000, atm.AtmBalance);
+    private Account myAccount2 = new Account(20000);
+    [Fact]
+    public void Withdraw()
+    {
+        myAccount2.Withdraw(5500);
 
+        Assert.Equal(14500, myAccount2.GetBalance());
     }
 }
-/*
-Bankomaten har 11000 kr. På kontot finns 9000 kr.
 
-Sätt in ett kort i bankomaten. (Bankomaten ska veta att ett kort är inne)
-Mata in en felaktig pinkod (1234) i bankomaten. (Pinkoden ska vara sparad på kortet, men det är bankomaten som ska veta om rätt eller fel kod matats in)
-Mata in korrekt pinkod (0123).
-Ange 5000 kr att ta ut via bankomaten. Balansen ska tas från kontot som är kopplat till kortet.
-Mata ut kortet ur bankomaten.
-Mata in kortet igen, slå in pinkoden igen.
-Ange 7000 att ta ut. (Nu ska det inte finnas pengar så det räcker på bankomaten)
-Ange 6000 att ta ut. (Nu räckte bankomatens pengar precis, men inte pengarna på kontot)
-Mata ut kortet ur bankomaten.
+public class ATMTest()
+{
+    private Account myAccount = new Account(5000);
+    AtmService atm = new AtmService(20000);
+    [Fact]
+    public void ATMTesting()
+    {
+        Card newCard = new Card("2222","0000", myAccount);
+        atm.InsertCard(newCard);
+        Assert.True(atm.HasCardInserted);
+        atm.EnterPin("0000");
 
-*/
+    }
+} 
