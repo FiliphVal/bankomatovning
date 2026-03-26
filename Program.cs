@@ -1,9 +1,13 @@
 ﻿
 using ATM;
 
-var account = new Account(5000);
-var card = new Card("1234-5678", "1234", account);
-var atm = new AtmService(11000);
+// 1. Skapa tjänsten först
+AtmService atm = new AtmService(10000);
 
-ConsoleRunner.Run(atm, card);
+// 2. Skapa ett OBJEKT (en instans) av ConsoleRunner
+// Här körs konstruktorn som fyller din 'cards'-lista!
+ConsoleRunner runner = new ConsoleRunner(atm); 
+
+// 3. Anropa Run på objektet 'runner' istället för på klassen
+runner.Run();
 
